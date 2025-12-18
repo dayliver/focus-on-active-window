@@ -1,0 +1,15 @@
+{
+  "name": "Focus on Active Window",
+  "description": "Highlights the active window with a border, and dims inactive windows using custom styling.",
+  "uuid": "focus-on-active-window@hwaryong.com",
+  "shell-version": [
+    "45",
+    "46",
+    "47",
+    "48",
+    "49"
+  ],
+  "url": "https://github.com/dayliver/focus-on-active-window",
+  "version": 2,
+  "settings-schema": "org.gnome.shell.extensions.focus-on-active-window"
+}

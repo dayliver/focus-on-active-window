@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="focus-on-active-window">
+  <schema id="org.gnome.shell.extensions.focus-on-active-window" path="/org/gnome/shell/extensions/focus-on-active-window/">
+    
+    <key name="border-enabled" type="b">
+      <default>true</default>
+      <summary>Enable Border</summary>
+    </key>
+    <key name="border-use-system-color" type="b">
+      <default>false</default>
+      <summary>Use System Accent Color</summary>
+    </key>
+    <key name="border-color" type="s">
+      <default>'rgba(255, 215, 0, 1)'</default>
+      <summary>Custom Border Color</summary>
+    </key>
+    <key name="border-width" type="i">
+      <default>4</default>
+      <range min="1" max="20"/>
+      <summary>Border Width</summary>
+    </key>
+    <key name="border-radius" type="i">
+      <default>12</default>
+      <range min="0" max="50"/>
+      <summary>Border Radius</summary>
+    </key>
+
+    <key name="inactive-opacity" type="i">
+      <default>80</default>
+      <range min="0" max="100"/>
+      <summary>Inactive Window Opacity %</summary>
+    </key>
+    <key name="inactive-darkness" type="i">
+      <default>10</default>
+      <range min="0" max="100"/>
+      <summary>Inactive Window Darkness %</summary>
+    </key>
+    <key name="inactive-desaturation" type="i">
+      <default>100</default>
+      <range min="0" max="100"/>
+      <summary>Inactive Window Desaturation %</summary>
+    </key>
+
+  </schema>
+</schemalist>
