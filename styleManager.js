@@ -21,7 +21,7 @@ export class StyleManager {
         );
 
         this._settingChangedId = this._settings.connect('changed', () => {
-            this._updateAllWindows.bind(this); // 바인딩 수정
+            this._updateAllWindows.bind(this);
             this._updateAllWindows();
         });
 
@@ -49,17 +49,12 @@ export class StyleManager {
         const focusWindow = global.display.focus_window;
         const actors = global.window_group.get_children();
 
-        // [단위 변환 로직] 0~100% -> 실제 값
-        // 1. 투명도: 0~100 -> 0~255
         const opacityPercent = this._settings.get_int('inactive-opacity');
         const targetOpacity = Math.round((opacityPercent / 100) * 255);
 
-        // 2. 어둡기(Darkness): 0~100 -> 0.0 ~ -1.0
-        // 100% Dark means brightness -1.0
         const darknessPercent = this._settings.get_int('inactive-darkness');
         const targetBrightness = (darknessPercent / 100) * -1.0;
 
-        // 3. 흑백(Desaturation): 0~100 -> 0.0 ~ 1.0 (Clutter Factor)
         const desatPercent = this._settings.get_int('inactive-desaturation');
         const targetDesatFactor = desatPercent / 100.0;
 
@@ -79,7 +74,6 @@ export class StyleManager {
             const metaWin = actor.meta_window;
             if (!metaWin) return;
 
-            // [자식 창 해결] DIALOG 타입 포함
             const type = metaWin.get_window_type();
             if (type !== Meta.WindowType.NORMAL && 
                 type !== Meta.WindowType.DIALOG && 
@@ -97,14 +91,12 @@ export class StyleManager {
         actor.opacity = config.OPACITY;
         actor.clear_effects();
 
-        // Brightness (Darkness)
         if (config.BRIGHTNESS !== 0.0) {
             let effect = new Clutter.BrightnessContrastEffect();
             effect.set_brightness(config.BRIGHTNESS);
             actor.add_effect(effect);
         }
 
-        // Desaturation
         if (config.DESAT_FACTOR > 0.0) {
             let effect = new Clutter.DesaturateEffect({ factor: config.DESAT_FACTOR });
             actor.add_effect(effect);

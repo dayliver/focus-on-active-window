@@ -10,6 +10,6 @@
     "49"
   ],
   "url": "https://github.com/dayliver/focus-on-active-window",
-  "version": 2,
+  "version": 3,
   "settings-schema": "org.gnome.shell.extensions.focus-on-active-window"
 }

@@ -1,16 +1,14 @@
-import Clutter from 'gi://Clutter';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
 import Meta from 'gi://Meta';
 import Gio from 'gi://Gio';
 
-// 시스템 Accent Color 매핑 (GNOME 45+ 표준)
 const ACCENT_COLORS = {
     'blue': 'rgb(53, 132, 228)',
     'teal': 'rgb(33, 144, 164)',
     'green': 'rgb(58, 169, 152)',
     'yellow': 'rgb(229, 165, 10)',
-    'orange': 'rgb(230, 97, 0)',      // Ubuntu Default
+    'orange': 'rgb(230, 97, 0)',
     'red': 'rgb(192, 28, 40)',
     'pink': 'rgb(208, 97, 188)',
     'purple': 'rgb(145, 65, 172)',
@@ -34,13 +32,11 @@ class WindowBorder extends St.Bin {
 
         this._updateStyle();
         
-        // 설정 변경 감지
         this._settingsSignalId = this._settings.connect('changed', () => {
             this._updateStyle();
             this._syncGeometry();
         });
         
-        // 시스템 테마 색상 변경 감지 (Accent Color)
         if (this._systemSettings) {
              this._systemSignalId = this._systemSettings.connect('changed::accent-color', () => {
                 if (this._settings.get_boolean('border-use-system-color')) {
@@ -155,7 +151,6 @@ export class BorderManager {
         this._focusSignalId = null;
         this._settingChangedId = null;
         
-        // 시스템 인터페이스 설정 가져오기 (Accent Color용)
         this._systemSettings = new Gio.Settings({ schema_id: 'org.gnome.desktop.interface' });
     }
 
@@ -181,7 +176,7 @@ export class BorderManager {
             this._settings.disconnect(this._settingChangedId);
             this._settingChangedId = null;
         }
-        this._systemSettings = null; // 정리
+        this._systemSettings = null;
         this._removeBorder();
     }
 
@@ -193,7 +188,6 @@ export class BorderManager {
         const focusWindow = global.display.focus_window;
         if (!focusWindow) return;
 
-        // [자식 창 해결] DIALOG, MODAL_DIALOG 허용
         const type = focusWindow.get_window_type();
         if (type !== Meta.WindowType.NORMAL && 
             type !== Meta.WindowType.DIALOG && 
