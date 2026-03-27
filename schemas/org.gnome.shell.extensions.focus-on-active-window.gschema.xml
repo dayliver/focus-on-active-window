@@ -45,7 +45,26 @@
       <summary>Skip Always-on-Top Windows</summary>
       <description>Exempt always-on-top windows from inactive effects</description>
     </key>
-
+    <key name="skip-fullscreen" type="b">
+      <default>false</default>
+      <summary>Skip Fullscreen Windows</summary>
+      <description>Exempt fullscreen windows from inactive effects</description>
+    </key>
+    <key name="skip-maximized-horizontal" type="b">
+      <default>false</default>
+      <summary>Skip Horizontally Maximized Windows</summary>
+      <description>Exempt horizontally maximized (or tiled) windows from inactive effects</description>
+    </key>
+    <key name="skip-maximized-vertical" type="b">
+      <default>false</default>
+      <summary>Skip Vertically Maximized Windows</summary>
+      <description>Exempt vertically maximized (or tiled) windows from inactive effects</description>
+    </key>
+    <key name="skip-sticky" type="b">
+      <default>false</default>
+      <summary>Skip Sticky Windows</summary>
+      <description>Exempt windows visible on all workspaces from inactive effects</description>
+    </key>
 
     <key name="inactive-opacity" type="i">
       <default>80</default>

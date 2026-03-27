@@ -61,6 +61,10 @@ export class StyleManager {
         this._filterMode = this._settings.get_string('filter-mode');
         this._filterList = this._settings.get_strv('filter-app-list');
         this._skipAbove = this._settings.get_boolean('skip-always-on-top');
+        this._skipFullscreen = this._settings.get_boolean('skip-fullscreen');
+        this._skipMaxH = this._settings.get_boolean('skip-maximized-horizontal');
+        this._skipMaxV = this._settings.get_boolean('skip-maximized-vertical');
+        this._skipSticky = this._settings.get_boolean('skip-sticky');
     }
 
     _updateAllWindows() {
@@ -96,6 +100,10 @@ export class StyleManager {
 
             const isExcluded =
                 (this._skipAbove && metaWin.is_above()) ||
+                (this._skipFullscreen && metaWin.is_fullscreen()) ||
+                (this._skipMaxH && metaWin.maximized_horizontally) ||
+                (this._skipMaxV && metaWin.maximized_vertically) ||
+                (this._skipSticky && metaWin.is_on_all_workspaces()) ||
                 (this._filterMode === 'denylist' && this._filterList.includes(wmClass)) ||
                 (this._filterMode === 'allowlist' && this._filterList.length > 0 && !this._filterList.includes(wmClass));
 

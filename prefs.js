@@ -142,6 +142,33 @@ export default class FocusPreferences extends ExtensionPreferences {
         stateGroup.add(skipAboveRow);
         settings.bind('skip-always-on-top', skipAboveRow, 'active', 0);
 
+        const skipFullscreenRow = new Adw.SwitchRow({
+            title: _('Skip Fullscreen Windows')
+        });
+        stateGroup.add(skipFullscreenRow);
+        settings.bind('skip-fullscreen', skipFullscreenRow, 'active', 0);
+
+        const skipMaxHRow = new Adw.SwitchRow({
+            title: _('Skip Horizontally Maximized'),
+            subtitle: _('Includes tiled/snapped windows')
+        });
+        stateGroup.add(skipMaxHRow);
+        settings.bind('skip-maximized-horizontal', skipMaxHRow, 'active', 0);
+
+        const skipMaxVRow = new Adw.SwitchRow({
+            title: _('Skip Vertically Maximized'),
+            subtitle: _('Includes tiled/snapped windows')
+        });
+        stateGroup.add(skipMaxVRow);
+        settings.bind('skip-maximized-vertical', skipMaxVRow, 'active', 0);
+
+        const skipStickyRow = new Adw.SwitchRow({
+            title: _('Skip Sticky Windows'),
+            subtitle: _('Windows visible on all workspaces')
+        });
+        stateGroup.add(skipStickyRow);
+        settings.bind('skip-sticky', skipStickyRow, 'active', 0);
+
         // ==========================================
         // 4. Per-App Filtering
         // ==========================================
