@@ -21,7 +21,6 @@ export class StyleManager {
         );
 
         this._settingChangedId = this._settings.connect('changed', () => {
-            this._updateAllWindows.bind(this);
             this._updateAllWindows();
         });
 
