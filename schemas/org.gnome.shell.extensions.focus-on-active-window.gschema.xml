@@ -25,6 +25,28 @@
       <summary>Border Radius</summary>
     </key>
 
+    <key name="filter-mode" type="s">
+      <default>'denylist'</default>
+      <summary>Filter Mode</summary>
+      <description>Whether the app list is a denylist (exclude listed apps from effects) or allowlist (only apply effects to listed apps)</description>
+    </key>
+    <key name="filter-app-list" type="as">
+      <default>[]</default>
+      <summary>Filter App List</summary>
+      <description>List of WM_CLASS strings to filter</description>
+    </key>
+    <key name="known-window-classes" type="as">
+      <default>[]</default>
+      <summary>Known Window Classes</summary>
+      <description>Populated by the extension with WM_CLASS values of open windows</description>
+    </key>
+    <key name="skip-always-on-top" type="b">
+      <default>false</default>
+      <summary>Skip Always-on-Top Windows</summary>
+      <description>Exempt always-on-top windows from inactive effects</description>
+    </key>
+
+
     <key name="inactive-opacity" type="i">
       <default>80</default>
       <range min="0" max="100"/>
