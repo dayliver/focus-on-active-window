@@ -7,9 +7,12 @@ export class StyleManager {
         this._focusSignalId = null;
         this._windowCreatedId = null;
         this._settingChangedId = null;
+        this._lastKnownClasses = [];
     }
 
     enable() {
+        this._loadSettings();
+
         this._focusSignalId = global.display.connect(
             'notify::focus-window',
             this._updateAllWindows.bind(this)
@@ -21,7 +24,7 @@ export class StyleManager {
         );
 
         this._settingChangedId = this._settings.connect('changed', () => {
-            this._updateAllWindows.bind(this);
+            this._loadSettings();
             this._updateAllWindows();
         });
 
@@ -45,23 +48,33 @@ export class StyleManager {
         this._resetAllWindows();
     }
 
+    _loadSettings() {
+        const opacityPercent = this._settings.get_int('inactive-opacity');
+        this._targetOpacity = Math.round((opacityPercent / 100) * 255);
+
+        const darknessPercent = this._settings.get_int('inactive-darkness');
+        this._targetBrightness = (darknessPercent / 100) * -1.0;
+
+        const desatPercent = this._settings.get_int('inactive-desaturation');
+        this._targetDesatFactor = desatPercent / 100.0;
+
+        this._filterMode = this._settings.get_string('filter-mode');
+        this._filterList = this._settings.get_strv('filter-app-list');
+        this._skipAbove = this._settings.get_boolean('skip-always-on-top');
+        this._skipFullscreen = this._settings.get_boolean('skip-fullscreen');
+        this._skipMaxH = this._settings.get_boolean('skip-maximized-horizontal');
+        this._skipMaxV = this._settings.get_boolean('skip-maximized-vertical');
+        this._skipSticky = this._settings.get_boolean('skip-sticky');
+    }
+
     _updateAllWindows() {
         const focusWindow = global.display.focus_window;
         const actors = global.window_group.get_children();
 
-        const opacityPercent = this._settings.get_int('inactive-opacity');
-        const targetOpacity = Math.round((opacityPercent / 100) * 255);
-
-        const darknessPercent = this._settings.get_int('inactive-darkness');
-        const targetBrightness = (darknessPercent / 100) * -1.0;
-
-        const desatPercent = this._settings.get_int('inactive-desaturation');
-        const targetDesatFactor = desatPercent / 100.0;
-
         const inactiveConfig = {
-            OPACITY: targetOpacity,
-            BRIGHTNESS: targetBrightness,
-            DESAT_FACTOR: targetDesatFactor
+            OPACITY: this._targetOpacity,
+            BRIGHTNESS: this._targetBrightness,
+            DESAT_FACTOR: this._targetDesatFactor
         };
 
         const activeConfig = {
@@ -69,6 +82,8 @@ export class StyleManager {
             BRIGHTNESS: 0.0,
             DESAT_FACTOR: 0.0
         };
+
+        const knownClasses = new Set();
 
         actors.forEach(actor => {
             const metaWin = actor.meta_window;
@@ -79,12 +94,32 @@ export class StyleManager {
                 type !== Meta.WindowType.DIALOG && 
                 type !== Meta.WindowType.MODAL_DIALOG) return;
 
-            if (focusWindow && metaWin === focusWindow) {
+            const isFocused = focusWindow && metaWin === focusWindow;
+            const wmClass = metaWin.get_wm_class();
+            if (wmClass) knownClasses.add(wmClass);
+
+            const isExcluded =
+                (this._skipAbove && metaWin.is_above()) ||
+                (this._skipFullscreen && metaWin.is_fullscreen()) ||
+                (this._skipMaxH && metaWin.maximized_horizontally) ||
+                (this._skipMaxV && metaWin.maximized_vertically) ||
+                (this._skipSticky && metaWin.is_on_all_workspaces()) ||
+                (this._filterMode === 'denylist' && this._filterList.includes(wmClass)) ||
+                (this._filterMode === 'allowlist' && this._filterList.length > 0 && !this._filterList.includes(wmClass));
+
+            if (isFocused || isExcluded) {
                 this._applyStyle(actor, activeConfig);
             } else {
                 this._applyStyle(actor, inactiveConfig);
             }
         });
+
+        const sorted = [...knownClasses].sort();
+        if (sorted.length !== this._lastKnownClasses.length ||
+            sorted.some((c, i) => c !== this._lastKnownClasses[i])) {
+            this._lastKnownClasses = sorted;
+            this._settings.set_strv('known-window-classes', sorted);
+        }
     }
 
     _applyStyle(actor, config) {
