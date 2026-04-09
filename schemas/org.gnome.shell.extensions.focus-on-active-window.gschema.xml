@@ -41,5 +41,18 @@
       <summary>Inactive Window Desaturation %</summary>
     </key>
 
+    <key name="skip-fullscreen-windows" type="b">
+      <default>true</default>
+      <summary>Skip Fullscreen Windows</summary>
+    </key>
+    <key name="excluded-apps" type="s">
+      <default>''</default>
+      <summary>Excluded Apps</summary>
+    </key>
+    <key name="excluded-window-titles" type="s">
+      <default>''</default>
+      <summary>Excluded Window Titles</summary>
+    </key>
+
   </schema>
 </schemalist>

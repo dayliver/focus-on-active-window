@@ -2,6 +2,7 @@ import GObject from 'gi://GObject';
 import St from 'gi://St';
 import Meta from 'gi://Meta';
 import Gio from 'gi://Gio';
+import { shouldBypassEffects } from './windowFilter.js';
 
 const ACCENT_COLORS = {
     'blue': 'rgb(53, 132, 228)',
@@ -91,7 +92,7 @@ class WindowBorder extends St.Bin {
     _syncGeometry() {
         if (!this._metaWindow || !this._windowActor) return;
 
-        if (this._metaWindow.is_fullscreen() || 
+        if (shouldBypassEffects(this._settings, this._metaWindow) ||
             (this._metaWindow.maximized_horizontally && this._metaWindow.maximized_vertically)) {
             this.hide();
             return;
@@ -160,7 +161,7 @@ export class BorderManager {
             this._onFocusChanged.bind(this)
         );
         
-        this._settingChangedId = this._settings.connect('changed::border-enabled', () => {
+        this._settingChangedId = this._settings.connect('changed', () => {
             this._onFocusChanged();
         });
 
@@ -192,6 +193,8 @@ export class BorderManager {
         if (type !== Meta.WindowType.NORMAL && 
             type !== Meta.WindowType.DIALOG && 
             type !== Meta.WindowType.MODAL_DIALOG) return;
+
+        if (shouldBypassEffects(this._settings, focusWindow)) return;
 
         const windowActor = focusWindow.get_compositor_private();
         if (windowActor) {

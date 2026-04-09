@@ -126,5 +126,50 @@ export default class FocusPreferences extends ExtensionPreferences {
         });
         styleGroup.add(desatRow);
         settings.bind('inactive-desaturation', desatRow, 'value', 0);
+
+        const behaviorGroup = new Adw.PreferencesGroup({
+            title: _('Exceptions'),
+            description: _('Exclude fullscreen windows, specific apps, or matching window titles from dimming and borders.')
+        });
+        page.add(behaviorGroup);
+
+        const fullscreenRow = new Adw.SwitchRow({
+            title: _('Ignore Fullscreen Windows'),
+            subtitle: _('Leave fullscreen windows fully untouched')
+        });
+        behaviorGroup.add(fullscreenRow);
+        settings.bind('skip-fullscreen-windows', fullscreenRow, 'active', 0);
+
+        const excludedAppsRow = new Adw.EntryRow({
+            title: _('Excluded Apps'),
+        });
+        excludedAppsRow.set_text(settings.get_string('excluded-apps'));
+        excludedAppsRow.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
+        excludedAppsRow.connect('changed', row => {
+            settings.set_string('excluded-apps', row.get_text());
+        });
+        behaviorGroup.add(excludedAppsRow);
+
+        const excludedAppsHelp = new Adw.ActionRow({
+            title: _('App matches'),
+            subtitle: _('Comma or newline separated. Matches app name, desktop ID, WM_CLASS, or WM_CLASS instance.')
+        });
+        behaviorGroup.add(excludedAppsHelp);
+
+        const excludedTitlesRow = new Adw.EntryRow({
+            title: _('Excluded Window Titles'),
+        });
+        excludedTitlesRow.set_text(settings.get_string('excluded-window-titles'));
+        excludedTitlesRow.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
+        excludedTitlesRow.connect('changed', row => {
+            settings.set_string('excluded-window-titles', row.get_text());
+        });
+        behaviorGroup.add(excludedTitlesRow);
+
+        const excludedTitlesHelp = new Adw.ActionRow({
+            title: _('Title matches'),
+            subtitle: _('Comma or newline separated substrings matched against the window title.')
+        });
+        behaviorGroup.add(excludedTitlesHelp);
     }
 }
