@@ -1,5 +1,6 @@
 import Clutter from 'gi://Clutter';
 import Meta from 'gi://Meta';
+import { shouldBypassEffects } from './windowFilter.js';
 
 export class StyleManager {
     constructor(settings) {
@@ -7,6 +8,7 @@ export class StyleManager {
         this._focusSignalId = null;
         this._windowCreatedId = null;
         this._settingChangedId = null;
+        this._trackedWindows = new Map();
     }
 
     enable() {
@@ -17,7 +19,10 @@ export class StyleManager {
 
         this._windowCreatedId = global.display.connect(
             'window-created',
-            this._updateAllWindows.bind(this)
+            (_display, metaWindow) => {
+                this._trackWindow(metaWindow);
+                this._updateAllWindows();
+            }
         );
 
         this._settingChangedId = this._settings.connect('changed', () => {
@@ -25,6 +30,7 @@ export class StyleManager {
             this._updateAllWindows();
         });
 
+        global.get_window_actors().forEach(actor => this._trackWindow(actor.meta_window));
         this._updateAllWindows();
     }
 
@@ -41,13 +47,44 @@ export class StyleManager {
             this._settings.disconnect(this._settingChangedId);
             this._settingChangedId = null;
         }
+
+        this._disconnectTrackedWindows();
         
         this._resetAllWindows();
+    }
+
+    _trackWindow(metaWindow) {
+        if (!metaWindow || this._trackedWindows.has(metaWindow))
+            return;
+
+        const sizeChangedId = metaWindow.connect('size-changed', () => this._updateAllWindows());
+        const positionChangedId = metaWindow.connect('position-changed', () => this._updateAllWindows());
+        const unmanagedId = metaWindow.connect('unmanaged', () => this._untrackWindow(metaWindow));
+
+        this._trackedWindows.set(metaWindow, [sizeChangedId, positionChangedId, unmanagedId]);
+    }
+
+    _untrackWindow(metaWindow) {
+        const signalIds = this._trackedWindows.get(metaWindow);
+        if (!signalIds)
+            return;
+
+        signalIds.forEach(signalId => metaWindow.disconnect(signalId));
+        this._trackedWindows.delete(metaWindow);
+    }
+
+    _disconnectTrackedWindows() {
+        for (const [metaWindow, signalIds] of this._trackedWindows.entries()) {
+            signalIds.forEach(signalId => metaWindow.disconnect(signalId));
+        }
+
+        this._trackedWindows.clear();
     }
 
     _updateAllWindows() {
         const focusWindow = global.display.focus_window;
         const actors = global.window_group.get_children();
+        const disableAllEffects = shouldBypassEffects(this._settings, focusWindow);
 
         const opacityPercent = this._settings.get_int('inactive-opacity');
         const targetOpacity = Math.round((opacityPercent / 100) * 255);
@@ -78,6 +115,16 @@ export class StyleManager {
             if (type !== Meta.WindowType.NORMAL && 
                 type !== Meta.WindowType.DIALOG && 
                 type !== Meta.WindowType.MODAL_DIALOG) return;
+
+            if (disableAllEffects) {
+                this._applyStyle(actor, activeConfig);
+                return;
+            }
+
+            if (shouldBypassEffects(this._settings, metaWin)) {
+                this._applyStyle(actor, activeConfig);
+                return;
+            }
 
             if (focusWindow && metaWin === focusWindow) {
                 this._applyStyle(actor, activeConfig);
