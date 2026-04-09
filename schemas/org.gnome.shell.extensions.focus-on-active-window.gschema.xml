@@ -53,6 +53,10 @@
       <default>''</default>
       <summary>Excluded Window Titles</summary>
     </key>
+    <key name="ignore-media-windows" type="b">
+      <default>false</default>
+      <summary>Ignore Media Windows</summary>
+    </key>
 
   </schema>
 </schemalist>

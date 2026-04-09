@@ -140,6 +140,13 @@ export default class FocusPreferences extends ExtensionPreferences {
         behaviorGroup.add(fullscreenRow);
         settings.bind('skip-fullscreen-windows', fullscreenRow, 'active', 0);
 
+        const mediaRow = new Adw.SwitchRow({
+            title: _('Ignore Media / Call Windows'),
+            subtitle: _('Heuristically bypass effects for video players, YouTube-like tabs, and common meeting apps')
+        });
+        behaviorGroup.add(mediaRow);
+        settings.bind('ignore-media-windows', mediaRow, 'active', 0);
+
         const excludedAppsRow = new Adw.EntryRow({
             title: _('Excluded Apps'),
         });

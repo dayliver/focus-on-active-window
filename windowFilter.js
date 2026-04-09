@@ -1,5 +1,41 @@
 import Shell from 'gi://Shell';
 
+const MEDIA_APP_TOKENS = [
+    'vlc',
+    'mpv',
+    'celluloid',
+    'totem',
+    'spotify',
+    'youtube music',
+    'plex',
+    'stremio',
+    'zoom',
+    'teams',
+    'skype',
+    'discord',
+    'slack',
+    'webex',
+    'jitsi',
+];
+
+const MEDIA_TITLE_TOKENS = [
+    'youtube',
+    'netflix',
+    'twitch',
+    'prime video',
+    'disney+',
+    'hulu',
+    'jellyfin',
+    'plex',
+    'meet',
+    'zoom meeting',
+    'microsoft teams',
+    'webex',
+    'jitsi',
+    'slack call',
+    'huddle',
+];
+
 function _parseList(value) {
     return value
         .split(/[,\n]/)
@@ -21,6 +57,15 @@ function _getWindowTokens(metaWindow) {
         .map(value => value.toLowerCase());
 }
 
+function _matchesMediaWindow(metaWindow) {
+    const tokens = _getWindowTokens(metaWindow);
+    if (tokens.some(token => MEDIA_APP_TOKENS.some(candidate => token.includes(candidate))))
+        return true;
+
+    const title = (metaWindow.get_title() ?? '').toLowerCase();
+    return MEDIA_TITLE_TOKENS.some(candidate => title.includes(candidate));
+}
+
 function _coversMonitor(metaWindow) {
     const monitorIndex = metaWindow.get_monitor?.();
     if (monitorIndex === null || monitorIndex === undefined || monitorIndex < 0)
@@ -40,6 +85,9 @@ export function shouldBypassEffects(settings, metaWindow) {
         return true;
 
     if (settings.get_boolean('skip-fullscreen-windows') && (metaWindow.is_fullscreen() || _coversMonitor(metaWindow)))
+        return true;
+
+    if (settings.get_boolean('ignore-media-windows') && _matchesMediaWindow(metaWindow))
         return true;
 
     const excludedApps = _parseList(settings.get_string('excluded-apps'));
