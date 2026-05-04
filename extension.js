@@ -1,6 +1,6 @@
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
-import { BorderManager } from './borderManager.js';
-import { StyleManager } from './styleManager.js';
+import { BorderManager } from './lib/borderManager.js';
+import { StyleManager } from './lib/styleManager.js';
 
 export default class FocusExtension extends Extension {
     enable() {
