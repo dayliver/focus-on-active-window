@@ -25,6 +25,11 @@ It is designed with performance and aesthetics in mind, utilizing `bind_property
 - **Recommended Extensions**:
   - Works well with [Tile-on-Grid](https://extensions.gnome.org/extension/9041/tile-on-grid/), allowing you to organize your windows efficiently while still highlighting the active window.
 
+## 🆕 Changelog
+
+### v7
+- Removed emphasis on tooltips to reduce visual distraction and improve overall focus.
+
 ## 📋 Requirements
 
 - GNOME Shell **45** or later.
