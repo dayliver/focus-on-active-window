@@ -1,9 +1,3 @@
-schemas/gschema.compiled
-.DS_Store
-*.zip
-schemas/gschema.compiled
-.DS_Store
-*.zip
-schemas/gschema.compiled
+schemas/gschemas.compiled
 .DS_Store
 *.zip
