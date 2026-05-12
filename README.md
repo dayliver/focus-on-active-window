@@ -27,6 +27,10 @@ It is designed with performance and aesthetics in mind, utilizing `bind_property
 
 ## 🆕 Changelog
 
+### v8
+- **Context menus & popups**: Removed the extra border that was drawn around context menus and similar popups. The highlight now stays on the active window only, which keeps the look simpler and more consistent.
+- **Occlusion fix**: Popups (including context menus and tooltips where supported) are raised above the window border in the compositor stack, so they are no longer covered by the border—functionally cleaner without the second outline.
+
 ### v7
 - Removed emphasis on tooltips to reduce visual distraction and improve overall focus.
 
